@@ -13,23 +13,29 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build two_sum.cpp",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-                "${file}",
-                "-o",
-                "${fileDirname}/${fileBasenameNoExtension}.out",
-                "-g"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+    "tasks": [{
+        "label": "echo", // 任务名称，与launch.json的preLaunchTask相对应
+        "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
+        "command": "g++", // 要使用的编译器，C++用g++
+        "args": [
+            "-g", // 生成和调试有关的信息
+            "${file}", // 当前活动的文档名
+            // "${fileDirname}/compute/add.cpp", // 指定路径下的待编译文档
+            "-o", // 指定输出文件名，不加该参数则默认输出 xxx.exe，Linux / Mac下默认 xxx.out
+            "${fileDirname}/${fileBasenameNoExtension}.out",
+            "-Wall", // 开启额外警告
+        ],
+        "group": {
+            "kind": "build",
+            "isDefault": true // 不为true时ctrl shift B就要手动选择了
+        },
+        "presentation": {
+            "echo": true,
+            "reveal": "always", // 执行任务时是否跳转到终端面板，可以为always，silent，never。具体参见VSC的文档
+            "focus": false, // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
+            "panel": "shared" // 不同的文件的编译信息共享一个终端面板
         }
-    ]
+    }]
 }
 ```
 
@@ -58,11 +64,9 @@
 
 该文件的作用是为了可以让我们愉快地调试代码的啦。首先找到虫子的图标，然后点击设置的按钮，在蹦出来的选项中选择C++ (GDB/LLDB)，就像图片中这个样子：
 
-然后，跟tasks.json相对应，简单修改后如下：
-
 ```json
 {
-    // 使用 IntelliSense 了解相关属性。 
+    // 使用 IntelliSense 了解相关属性。
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
