@@ -4,34 +4,30 @@ using namespace std;
 class Time
 {
 public:
-	void set_time(void);
-	void show_time(void);
-	int hour;
-	int minute;
-	int sec;
+    void set_time()
+    {
+        cout << "设置时钟：H:M:S" << endl;
+        cin >> hour;
+        cin >> minute;
+        cin >> sec;
+    }
+
+    void show_time()
+    {
+        cout << hour << ":" << minute << ":" << sec << endl;
+    }
+
+private:
+    int hour;
+    int minute;
+    int sec;
 };
-
-Time t;
-
-void set_time(void);
-void show_time(void);
 
 int main()
 {
-	set_time();
-	show_time();
+    Time t;
+    t.set_time();
+    t.show_time();
 
-	return 0;
-}
-
-void set_time(void)
-{
-	cin >> t.hour;
-	cin >> t.minute;
-	cin >> t.sec;
-}
-
-void show_time(void)
-{
-	cout << t.hour << ":" << t.minute << ":" << t.sec << endl;
+    return 0;
 }
