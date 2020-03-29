@@ -5,6 +5,7 @@
         "iostream": "cpp",
         "system_error": "cpp",
         "bitset": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "ratio": "cpp"
     }
 }
