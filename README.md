@@ -1,4 +1,20 @@
-# Mac OS Catalina, VS Code 搭建c/c++基本开发环境
+# OOP
+
+🛸面向对象程序设计
+
+## 编译/运行
+
+```bash
+command+S   // 保存
+
+command+shift+b // 编译
+// 输出 xxx.out 及 xxx.out.dSYM 文件夹
+// 多文件编译时 向 tasks.json 的 args:[] 中添加相应目录
+// 如：
+// "${fileDirname}/compute/add.cpp"
+
+F5  // 运行
+```
 
 ## 1) 安装 vscode 和 c++对应插件
 
