@@ -2,32 +2,22 @@
  * @Description: 
  * @Author: hans
  * @Date: 2020-06-24 15:00:05
- * @LastEditTime: 2020-06-24 21:17:22
+ * @LastEditTime: 2020-06-25 14:44:43
  * @LastEditors: hans
  */
 #include <iostream>
-#include <cstdio>
-#include <cstring>
-#include <fstream> // fin fout
 #include <iomanip> // setw()
 using namespace std;
-// ********
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-// #include <conio.h>
-#define Null 0
 
 typedef struct LinkList
 {
-    int seat;
     int num;
     char name[20];
-    char telephone[11];
+    char telephone[12];
     struct LinkList *next;
 } LinkList;
 
-void ShowMenu()
+void ShowMenu() // 菜单功能
 {
     puts("                 **************************************");
     puts("                          学生通讯录管理系统v1.0         ");
@@ -45,89 +35,83 @@ void ShowMenu()
     puts("                 **************************************");
 }
 
-LinkList *creatIncreLink(int n)
+LinkList *prior(LinkList *L, LinkList *p) // 查找位于当前地址元素的前一元素的地址
 {
-    int i;
-    struct LinkList *L, *p, *s;
-    for (i = 1; i <= n; i++)
+    LinkList *p_prior = L;
+    if (L->next == NULL)
+        return (L);
+    while (p_prior->next != p)
     {
+        p_prior = p_prior->next;
+    }
+    return (p_prior);
+}
 
-        if (i == 1)
+void insertYouXu(LinkList *L, LinkList *Elem) // 插入一条通讯录,按照学号顺序
+{
+    LinkList *p;
+    p = L;
+    // while (p != NULL)
+    while (p != NULL && Elem->num >= p->num)
+    {
+        if (p->num == Elem->num)
         {
-            printf("请输入第%d个学生信息:\n", i);
-            p = (struct LinkList *)malloc(sizeof(struct LinkList));
-            printf("学号：");
-            cin >> p->num;
-            printf("请输入姓名：");
-            cin >> p->name;
-            printf("Tel：");
-            cin >> p->telephone;
-            L = p;
-            if (n == 1)
-                p->next = Null;
+            printf("该学号的学生已存在!\n");
+            return;
         }
-        else
-        {
-            printf("请输入第%d个学生信息:\n", i);
-            s = (struct LinkList *)malloc(sizeof(struct LinkList));
-            printf("学号：");
-            cin >> s->num;
-            printf("请输入姓名：");
-            cin >> s->name;
-            printf("Tel：");
-            cin >> s->telephone;
-            p->next = s;
-            p = s;
-            s->next = Null;
-        }
+        p = p->next;
+    } //确定Elem插入的位置
+    if (p == NULL)
+    {
+        p = prior(L, p);
+        Elem->next = NULL;
+        p->next = Elem;
+    }
+    else //若为空表，插到头结点之后
+    {
+        p = prior(L, p);
+        Elem->next = p->next;
+        p->next = Elem;
+    }
+}
+
+LinkList *creatIncreLink() // 链表的创建
+{
+    int i = 1, count = 1;
+    printf("请输入创建学生信息条数：");
+    cin >> count;
+    int num;
+    char name[20];
+    char telephone[12];
+    LinkList *L, *p;
+    L = (LinkList *)malloc(sizeof(LinkList)); // 头结点
+    L->next = NULL;
+
+    while (i <= count)
+    {
+        printf("请输入第%d个学生信息:\n", i);
+        printf("学号：");
+        cin >> num;
+        printf("请输入姓名：");
+        cin >> name;
+        printf("Tel：");
+        cin >> telephone;
+        p = (LinkList *)malloc(sizeof(LinkList)); //新结点
+        p->num = num;
+        strcpy(p->name, name);
+        strcpy(p->telephone, telephone);
+        insertYouXu(L, p); //有序的插入新结点
+        i++;
     }
 
     return L;
 }
 
-void insertYouXu(LinkList *L) // 插入一条通讯录
+void searchNum(LinkList *L, int n) // 按学号查找通讯录成员记录
 {
-    struct LinkList *p, *pi;
-    int xuehao;
-    printf("请问要在哪个学生后面插入数据（输入学号）:");
-    scanf("%d", &xuehao);
-    pi = (struct LinkList *)malloc(sizeof(struct LinkList));
+    LinkList *p;
     p = L;
-    printf("学号：");
-    cin >> pi->num;
-    printf("请输入姓名：");
-    cin >> pi->name;
-    printf("Tel：");
-    cin >> pi->telephone;
-    if (L == Null)
-    {
-        L = pi;
-        pi->next = Null;
-    }
-    else
-    {
-        while ((p->num != xuehao) && (p->next != Null))
-        {
-            p = p->next;
-        }
-        if (p->next != Null)
-        {
-            pi->next = p->next;
-            p->next = pi;
-        }
-        else
-        {
-            p->next = pi;
-            pi->next = Null;
-        }
-    }
-}
-
-void searchNum(LinkList *L, int n)
-{
-    struct LinkList *p;
-    p = L;
-    while (p != Null)
+    while (p != NULL)
     {
         if (p->num == n)
         {
@@ -142,17 +126,21 @@ void searchNum(LinkList *L, int n)
             printf("===================================================\n");
             break;
         }
+        else
+        {
+            cout << "未找到 " << n << " 的通讯信息";
+        }
         p = p->next;
     }
 }
 
-void searchName(LinkList *L, char n[20])
+void searchName(LinkList *L, char n[20]) // 按姓名查找通讯录成员记录
 {
-    struct LinkList *p;
+    LinkList *p;
     p = L;
-    while (p != Null)
+    while (p != NULL)
     {
-        if (p->name == n)
+        if (!strcmp(p->name, n))
         {
             printf("------------------学生通讯录-----------------------\n");
             printf("===================================================\n");
@@ -167,23 +155,23 @@ void searchName(LinkList *L, char n[20])
         }
         else
         {
-            cout << "未找到" << n;
-            cout << "未找到2" << p;
+            cout << "未找到 " << n << " 的通讯信息";
+            cout << "找到了 " << p->name << " 的。";
         }
         p = p->next;
     }
 }
-struct LinkList *del(struct LinkList *L, int n)
+LinkList *deleteElem(LinkList *L, int n) //从通讯录中按序号删除学号为n的数据
 {
-    struct LinkList *p, *q;
+    LinkList *p, *q;
     p = L;
-    if (L == Null)
+    if (L == NULL)
     {
         printf("没有学生的资料要删除!\n");
         return L;
     }
 
-    while (p->num != n && p->next != Null)
+    while (p->num != n && p->next != NULL)
     {
         q = p;
         p = p->next;
@@ -205,30 +193,33 @@ struct LinkList *del(struct LinkList *L, int n)
 void printList(LinkList *L) // 打印指针地址为L的通讯录
 {
     // int i = 0;
-    struct LinkList *p;
-    p = L;
+    LinkList *p;
+    p = L->next;
     printf("------------------学生通讯录-----------------------\n");
     printf("===================================================\n");
     cout << "学号\t\t姓名\t\t电话\n";
     printf("===================================================\n");
-    while (p != Null)
-    {
-        cout << left << setw(16) << p->num
-             << left << setw(16) << p->name
-             << left << setw(8) << p->telephone
-             << endl;
-        p = p->next;
-    }
+    if (L == NULL || L->next == NULL)
+        printf("该通讯录中数据\n");
+    else
+        while (p != NULL)
+        {
+            cout << left << setw(16) << p->num
+                 << left << setw(16) << p->name
+                 << left << setw(8) << p->telephone
+                 << endl;
+            p = p->next;
+        }
     printf("===================================================\n");
     printf("\n\n");
 }
 
-void tongji(struct LinkList *L)
+void tongji(LinkList *L) // 链表计数
 {
     int i = 0;
-    struct LinkList *p;
+    LinkList *p;
     p = L;
-    while (p != Null)
+    while (p != NULL)
     {
         i = i + 1;
         p = p->next;
@@ -237,14 +228,12 @@ void tongji(struct LinkList *L)
     printf("通讯录总人数为：%d\n", i);
 }
 
-void save(struct LinkList *L)
+void save(LinkList *L) // 通讯录保存函数
 {
-    // int i, j;
     FILE *fp;
     LinkList *p;
     p = L;
-    // char c; //L 头指针
-    if ((fp = fopen("c:\\stu_list", "wb")) == NULL)
+    if ((fp = fopen("stu_list", "wb")) == NULL)
     {
         printf("Cannot open file strike any key exit!");
         system("stty -icanon");
@@ -259,15 +248,14 @@ void save(struct LinkList *L)
     fclose(fp);
 }
 
-struct LinkList *read()
+LinkList *read() // 读取通讯录文件
 {
-    // int i = 0, j;
     FILE *fp;
-    struct LinkList *p; //工作指针
+    LinkList *p;        //工作指针
     LinkList *last, *L; //最后一项的指针
     L = (LinkList *)malloc(sizeof(LinkList));
     last = L;
-    if ((fp = fopen("c:\\stu_list", "rb")) == NULL)
+    if ((fp = fopen("stu_list", "rb")) == NULL)
     {
         printf("Cannot open file strike any key exit!");
         system("stty -icanon");
@@ -289,10 +277,8 @@ struct LinkList *read()
 
 int main()
 {
-    // FILE *fp;
     char ch, c;
-    int n = 0;
-    struct LinkList *L;
+    LinkList *L;
     ShowMenu();
     while ((ch = tolower(getchar())) != '0')
     {
@@ -300,9 +286,7 @@ int main()
         {
         case '1':
         {
-            printf("请问有多少个学生的资料要输入?\n");
-            scanf("%d", &n);
-            L = creatIncreLink(n);
+            L = creatIncreLink();
             printList(L);
             save(L);
             break;
@@ -310,8 +294,17 @@ int main()
 
         case '2':
         {
-            insertYouXu(L);
-            printList(L);
+            LinkList *p;
+            p = (LinkList *)malloc(sizeof(LinkList)); //新结点
+            // char name[20];
+            printf("请输入通讯者的学号和姓名：\n");
+            printf("请输入学号: ");
+            cin >> p->num;
+            printf("请输入姓名: ");
+            cin >> p->name;
+            printf("请输入电话号码: ");
+            cin >> p->telephone;
+            insertYouXu(L, p); //有序的插入新结点
             save(L);
             break;
         }
@@ -335,7 +328,7 @@ int main()
             {
                 printf("请输入要查找同学的姓名:");
                 char n[20];
-                cin >> n[20];
+                cin >> n;
                 searchName(L, n);
                 break;
             }
@@ -348,7 +341,7 @@ int main()
             int num;
             printf("请输入要删除学生的学号:\n");
             scanf("%d", &num);
-            L = del(L, num);
+            L = deleteElem(L, num);
             printList(L);
             save(L);
             break;
@@ -360,7 +353,7 @@ int main()
             printList(L);
             break;
         }
-        
+
         case '6':
         {
             tongji(L);
@@ -380,7 +373,6 @@ int main()
         printf("\n\n\t======>按Enter键返回主菜单\n");
         fflush(stdin);
         c = getchar();
-        system("cls");
         ShowMenu();
     }
 }
