@@ -6,6 +6,9 @@
         "system_error": "cpp",
         "bitset": "cpp",
         "typeinfo": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "__bit_reference": "cpp",
+        "chrono": "cpp",
+        "unordered_map": "cpp"
     }
 }

@@ -2,12 +2,14 @@
  * @Description: 
  * @Author: hans
  * @Date: 2020-06-24 15:00:05
- * @LastEditTime: 2020-06-25 14:44:43
+ * @LastEditTime: 2020-06-25 15:30:42
  * @LastEditors: hans
  */
 #include <iostream>
 #include <iomanip> // setw()
 using namespace std;
+
+int seat;
 
 typedef struct LinkList
 {
@@ -107,7 +109,7 @@ LinkList *creatIncreLink() // 链表的创建
     return L;
 }
 
-void searchNum(LinkList *L, int n) // 按学号查找通讯录成员记录
+int searchNum(LinkList *L, int n) // 按学号查找通讯录成员记录
 {
     LinkList *p;
     p = L;
@@ -126,12 +128,9 @@ void searchNum(LinkList *L, int n) // 按学号查找通讯录成员记录
             printf("===================================================\n");
             break;
         }
-        else
-        {
-            cout << "未找到 " << n << " 的通讯信息";
-        }
         p = p->next;
     }
+    return 0;
 }
 
 void searchName(LinkList *L, char n[20]) // 按姓名查找通讯录成员记录
@@ -153,15 +152,66 @@ void searchName(LinkList *L, char n[20]) // 按姓名查找通讯录成员记录
             printf("===================================================\n");
             break;
         }
-        else
-        {
-            cout << "未找到 " << n << " 的通讯信息";
-            cout << "找到了 " << p->name << " 的。";
-        }
         p = p->next;
     }
 }
-LinkList *deleteElem(LinkList *L, int n) //从通讯录中按序号删除学号为n的数据
+
+LinkList *deleleElem(LinkList *L, int i) //从通讯录中按序号删除学号为n的数据
+{
+    LinkList *p, *q;
+    p = L;
+    int seat = 1;
+    if (L == NULL)
+    {
+        printf("没有学生的资料要删除!\n");
+        return L;
+    }
+
+    while (i < seat && p->next != NULL)
+    {
+        q = p;
+        p = p->next;
+        seat++;
+    }
+
+    if (p == L)
+        L = p->next;
+    else
+        q->next = p->next;
+    free(p);
+    return L;
+}
+
+LinkList *delName(LinkList *L, char n[]) //从通讯录中按序号删除学号为n的数据
+{
+    LinkList *p, *q;
+    p = L;
+    if (L == NULL)
+    {
+        printf("没有学生的资料要删除!\n");
+        return L;
+    }
+
+    while (!strcmp(p->name, n) && p->next != NULL)
+    {
+        q = p;
+        p = p->next;
+    }
+
+    if (!strcmp(p->name, n))
+    {
+        if (p == L)
+            L = p->next;
+        else
+            q->next = p->next;
+        free(p);
+    }
+    else
+        printf("找不到相应的学生资料!\n");
+    return L;
+}
+
+LinkList *delNum(LinkList *L, int n) //从通讯录中按序号删除学号为n的数据
 {
     LinkList *p, *q;
     p = L;
@@ -338,10 +388,38 @@ int main()
 
         case '4':
         {
-            int num;
-            printf("请输入要删除学生的学号:\n");
-            scanf("%d", &num);
-            L = deleteElem(L, num);
+
+            printf("1 按序号删除\n");
+            printf("2 按姓名删除\n");
+            printf("3 按学号删除\n");
+            cin >> ch;
+            switch (ch)
+            {
+            case '1':
+            {
+                printf("请输入要查找同学的序号:");
+                int n;
+                cin >> n;
+                searchNum(L, n);
+                break;
+            }
+            case '2':
+            {
+                printf("请输入要删除学生的姓名:\n");
+                char name[20];
+                cin >> name;
+                L = delName(L, name);
+                break;
+            }
+            case '3':
+            {
+                int num;
+                printf("请输入要删除学生的学号:\n");
+                scanf("%d", &num);
+                L = delNum(L, num);
+                break;
+            }
+            }
             printList(L);
             save(L);
             break;
